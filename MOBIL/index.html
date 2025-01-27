@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <title>Remote Control</title>
+    <style>
+        body {
+          font-family: Arial, sans-serif;
+          margin: 0;
+          padding: 0;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          height: 100vh;
+          background: #f4f4f4;
+        }
+    
+        .remote {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 20px;
+          padding: 10px;
+          border-radius: 20px;
+          background-color: #ffffff;
+          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+          width: 200px;
+          height: 200px;
+        }
+    
+        .button {
+          width: 55px;
+          height: 55px;
+          border-radius: 50%;
+          border: none;
+          font-size: 16px;
+          font-weight: bold;
+          background-color: #e0e0e0;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+          cursor: pointer;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          transition: all 0.2s ease-in-out;
+        }
+    
+        .button:active {
+          transform: scale(0.9);
+        }
+        .volume-control {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+        }
+    
+        #volumeDisplay {
+          font-size: 20px;
+          color: #444;
+          font-weight: bold;
+          padding: 15px 15px;
+          border-radius: 10px;
+          min-width: 40px;
+          text-align: center;
+        }
+    
+        .play-pause {
+          background: #28a745;
+        }
+    
+        .volume {
+          background-color: #cccccc;
+        }
+        .power {
+          background-color: #ff4d4d;
+          color: white;
+        }
+        .play-pause {
+          background-color: #4caf50;
+          color: white;
+        }
+      </style>
+</head>
+<body>
+    <h1>Remote Control</h1>
+    <div class="remote">
+        <!-- Power Button -->
+        <button class="button power" id="powerBtn">◯</button>
+
+        <!-- Volume Control -->
+        <div class="volume-control">
+        <button class="button volume" id="volDown">-</button>
+        <span id="volumeDisplay"> </span>
+        <button class="button volume" id="volUp">+</button>
+        </div>
+
+        <!-- Play/Pause Button -->
+        <button class="button play-pause" id="playPauseBtn">▶‖</button>
+    </div>
+
+    <script>
+        var ServerID = "192.168.35.229"
+
+        function sendCommand(command) {
+            fetch(`http://${ServerID}:5000/command`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ command: command }),
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Server error: ${response.statusText}`);
+                }
+                return response.json();
+            })
+            .catch(error => {
+                alert(`Error: ${error.message}`);
+            });
+        }
+
+        // Power Button Logic
+        const powerBtn = document.getElementById('powerBtn');
+
+        powerBtn.addEventListener('click', () => {
+            sendCommand('powerOff')
+        });
+
+        // Volume Control Logic
+        const volUp = document.getElementById('volUp');
+        const volDown = document.getElementById('volDown');
+
+        volUp.addEventListener('click', () => {
+            sendCommand('volumeUp')
+        });
+
+        volDown.addEventListener('click', () => {
+            sendCommand('volumeDown')
+        });
+
+        // Play/Pause Button Logic
+        const playPauseBtn = document.getElementById('playPauseBtn');
+
+        playPauseBtn.addEventListener('click', () => {
+            sendCommand('playpause')
+        });
+    </script>
+</body>
+</html>
