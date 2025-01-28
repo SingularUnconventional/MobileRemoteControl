@@ -5,7 +5,7 @@ a = Analysis(
     ['RemoteServer.py'],
     pathex=[],
     binaries=[],
-    datas=[],
+    datas=[('static', 'static'), ('templates', 'templates')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},

@@ -1,11 +1,24 @@
 from flask import Flask, request
+from flask import render_template
 from flask_cors import CORS
 from KeyPUT import PressKey
 
+import socket
+import sys
 import os
 
 app = Flask(__name__)
 CORS(app)
+
+sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+sock.connect(("www.google.com", 443))
+IP = sock.getsockname()[0]
+
+@app.route('/mobil')
+def mobil(MyIP=None):
+    return render_template('index.html', MyIP=IP)#나중에 ip를 입력받게.
+# def hello(name=None):
+#     return render_template('hello.html', name=name)
 
 @app.route('/command', methods=['POST'])
 def command():
@@ -36,4 +49,7 @@ def command():
         return {"status": "Unknown command"}, 400
 
 if __name__ == '__main__':
+    if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
+        os.chdir(sys._MEIPASS)
+
     app.run(host='0.0.0.0', port=5000)  # 로컬 네트워크에서만 작동
